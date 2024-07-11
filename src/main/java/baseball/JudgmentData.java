@@ -12,8 +12,16 @@ public class JudgmentData {
         this.ball = ball;
     }
 
-    boolean check3Strike(){
-        if(strike == 3){
+    int getStrike() {
+        return strike;
+    }
+
+    int getBall() {
+        return ball;
+    }
+
+    boolean check3Strike() {
+        if (strike == 3) {
             return true;
         }
         return false;

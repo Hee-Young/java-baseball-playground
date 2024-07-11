@@ -1,23 +1,52 @@
 package baseball;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 public class Baseball {
 
     OutputView outputView = new OutputView();
+    InputView inputView = new InputView();
 
     int[] answer = new int[3];
+    private boolean isplayingGame = true;
 
-    // 중복 없이 난수 생성하는 법..!!!
-    public void makeAnswer() {
-        answer[0] = (int) (Math.random() * 9) + 1;
-        for (int i = 1; i < answer.length; i++) {
-            answer[i] = (int) (Math.random() * 9) + 1;
-            i -= countStrike(answer[i], answer[i - 1]);
-            if (i == 2) {
-                i -= countStrike(answer[i], answer[i - 2]);
-            }
+    public void startGame() {
+        while (isplayingGame) {
+            startInning();
         }
+    }
+
+    public void startInning() {
+        boolean isInningDone = false;
+
+        makeAnswer();
+
+        while (!isInningDone) {
+            System.out.print("숫자를 입력해 주세요 : ");
+            String input = inputView.input();
+
+            JudgmentData judgment = judge(makeGuessArray(input));
+
+            outputView.result(judgment.getStrike(), judgment.getBall());
+
+            isInningDone = judgment.check3Strike();
+        }
+        isplayingGame = inputView.gameOver();
+    }
+
+    private void makeAnswer() {
+        Set<Integer> integers = new HashSet<>();
+
+        IntStream.rangeClosed(0, answer.length - 1).forEach(i -> {
+            int random = (int) (Math.random() * 9) + 1;
+            integers.add(random);
+        });
+        answer = integers.stream()
+            .mapToInt(Number::intValue)
+            .toArray();
+
         System.out.println(answer[0] + " " + answer[1] + " " + answer[2]);
     }
 
@@ -36,7 +65,6 @@ public class Baseball {
     }
 
     public JudgmentData judge(int[] input) {
-
         int strike = 0;
         int ball = 0;
 
@@ -45,12 +73,11 @@ public class Baseball {
             ball += countBall(input[i], answer[(i + 1) % 3], answer[(i + 2) % 3]);
         }
 
-        outputView.result(strike, ball);
         return new JudgmentData(strike, ball);
     }
 
-    public int countStrike(int number1, int number2) { // 동일한 기능 필요할 때
-        if (number1 == number2) {
+    private int countStrike(int answer, int input) { // 동일한 기능 필요할 때
+        if (answer == input) {
             return 1;
         }
         return 0;

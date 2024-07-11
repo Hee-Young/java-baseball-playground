@@ -6,7 +6,7 @@ public class InputView {
 
     Scanner scanner = new Scanner(System.in);
 
-    public String input() {
+    public String input(){
         return scanner.nextLine();
     }
 
@@ -17,7 +17,8 @@ public class InputView {
 
         if (inputValue.equals("1")) {
             return true;
-        } else if (inputValue.equals("2")) {
+        }
+        if (inputValue.equals("2")) {
             return false;
         }
         throw new IllegalArgumentException("올바르지 않은 입력입니다.");
